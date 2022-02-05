@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      MYSQL_ROOT_PASSWORD: test
+      TZ: 'Asia/Tokyo'
+    ports:
+      - 3306:3306
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d
+    command: --default-authentication-plugin=mysql_native_password
+    # mysql:8.0 から認証形式が変わったので必要↑
+
+  web:
+    container_name: django
+    build: ./dockerfiles/django_docker
+    command:
+      python3 manage.py runserver 0.0.0.0:8006
+    volumes:
+      - ./django:/code
+    ports:
+      - "8006:8006"
+    depends_on:
+      - db
+
+  front:
+    container_name: nuxt
+    build: ./dockerfiles/nuxt_docker
+    command: yarn dev
+    tty: true
+    volumes:
+      - ./nuxt:/code
+    ports:
+      - '3000:3000'
+      - '24678:24678'
+
+volumes:
+  mysqldata:
