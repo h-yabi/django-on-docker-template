@@ -20,26 +20,14 @@ services:
 
   web:
     container_name: django
-    build: ./dockerfiles/django_docker
-    command:
-      python3 manage.py runserver 0.0.0.0:8006
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8006
     volumes:
       - ./django:/code
     ports:
-      - "8006:8006"
+      - '8006:8006'
     depends_on:
       - db
-
-  front:
-    container_name: nuxt
-    build: ./dockerfiles/nuxt_docker
-    command: yarn dev
-    tty: true
-    volumes:
-      - ./nuxt:/code
-    ports:
-      - '3000:3000'
-      - '24678:24678'
 
 volumes:
   mysqldata:
